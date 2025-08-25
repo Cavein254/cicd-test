@@ -1,32 +1,32 @@
 pipeline:
   dev:
-    image: python:3.11
-    commands:
-      - pip install -r requirements.txt
-      - python manage.py check
-      - flake8 .  # linting, optional
-
-  test:
-    image: python:3.11
+    image: python:3.12-slim
+    environment:
+      DJANGO_SETTINGS_MODULE: core.settings.dev
     commands:
       - pip install -r requirements.txt
       - python manage.py migrate --noinput
-      - pytest -v --ds=yourproject.settings  # run tests
-    when:
-      branch:
-        - main
-        - develop
-      event:
-        - push
-        - pull_request
+      - python manage.py seed
+      - python manage.py check
+
+  test:
+    image: python:3.12-slim
+    environment:
+      DJANGO_SETTINGS_MODULE: core.settings.test
+    commands:
+      - pip install -r requirements.txt
+      - python manage.py migrate --noinput
+      - python manage.py seed
+      - pytest -v --ds=core.settings.test
 
   deploy:
     image: docker:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - DOCKER_USER=${DOCKER_USER}
-      - DOCKER_PASS=${DOCKER_PASS}
+      DJANGO_SETTINGS_MODULE: core.settings.prod
+      DOCKER_USER: ${DOCKER_USER}
+      DOCKER_PASS: ${DOCKER_PASS}
     commands:
       - echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
       - docker build -t my-django-app:${CI_COMMIT_SHA} .
