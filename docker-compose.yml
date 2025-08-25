@@ -26,8 +26,8 @@ services:
     image: postgres:16-alpine
     container_name: postgres_dev
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpass
       POSTGRES_DB: dev_db
     volumes:
       - pgdata_dev:/var/lib/postgresql/data
@@ -38,8 +38,8 @@ services:
     image: postgres:16-alpine
     container_name: postgres_test
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
       POSTGRES_DB: test_db
     volumes:
       - pgdata_test:/var/lib/postgresql/data
@@ -50,8 +50,8 @@ services:
     image: postgres:16-alpine
     container_name: postgres_prod
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: produser
+      POSTGRES_PASSWORD: prodpass
       POSTGRES_DB: prod_db
     volumes:
       - pgdata_prod:/var/lib/postgresql/data
