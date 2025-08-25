@@ -1,0 +1,38 @@
+pipeline:
+  dev:
+    image: python:3.11
+    commands:
+      - pip install -r requirements.txt
+      - python manage.py check
+      - flake8 .  # linting, optional
+
+  test:
+    image: python:3.11
+    commands:
+      - pip install -r requirements.txt
+      - python manage.py migrate --noinput
+      - pytest -v --ds=yourproject.settings  # run tests
+    when:
+      branch:
+        - main
+        - develop
+      event:
+        - push
+        - pull_request
+
+  deploy:
+    image: docker:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DOCKER_USER=${DOCKER_USER}
+      - DOCKER_PASS=${DOCKER_PASS}
+    commands:
+      - echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+      - docker build -t my-django-app:${CI_COMMIT_SHA} .
+      - docker push my-django-app:${CI_COMMIT_SHA}
+      - docker tag my-django-app:${CI_COMMIT_SHA} my-django-app:latest
+      - docker push my-django-app:latest
+    when:
+      branch: main
+      event: push
