@@ -1,13 +1,13 @@
-pipeline:
+steps:
   dev:
     image: python:3.12-slim
     environment:
       DJANGO_SETTINGS_MODULE: core.settings.dev
     commands:
       - pip install -r requirements.txt
-      - python manage.py migrate --noinput
-      - python manage.py seed
-      - python manage.py check
+      - python manage.py migrate
+      - python manage.py loaddata dev_fixtures.json
+      - python manage.py test
 
   test:
     image: python:3.12-slim
@@ -15,24 +15,14 @@ pipeline:
       DJANGO_SETTINGS_MODULE: core.settings.test
     commands:
       - pip install -r requirements.txt
-      - python manage.py migrate --noinput
-      - python manage.py seed
-      - pytest -v --ds=core.settings.test
+      - python manage.py migrate
+      - python manage.py test
 
   deploy:
     image: docker:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      DJANGO_SETTINGS_MODULE: core.settings.prod
-      DOCKER_USER: ${DOCKER_USER}
-      DOCKER_PASS: ${DOCKER_PASS}
+    secrets: [ docker_user, docker_pass ]
     commands:
       - echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-      - docker build -t my-django-app:${CI_COMMIT_SHA} .
-      - docker push my-django-app:${CI_COMMIT_SHA}
-      - docker tag my-django-app:${CI_COMMIT_SHA} my-django-app:latest
-      - docker push my-django-app:latest
-    when:
-      branch: main
-      event: push
+      - docker build -t myapp:${CI_COMMIT_SHA} .
+      - docker push myapp:${CI_COMMIT_SHA}
+
