@@ -9,7 +9,7 @@ services:
       - "8000:8000"
     environment:
       # You can point to dev/test/prod depending on what you want to run
-      DJANGO_SETTINGS_MODULE: myproject.settings.dev
+      DJANGO_SETTINGS_MODULE: core.settings.dev
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: dev_db
@@ -20,6 +20,24 @@ services:
       - db_dev
       - db_test
       - db_prod
+      - rabbitmq
+  
+  celery:
+    build: .
+    container_name: celery_worker
+    command: celery -A core worker --loglevel=info
+    volumes:
+      - .:/app
+    environment:
+      DJANGO_SETTINGS_MODULE: core.settings.dev
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: dev_db
+      POSTGRES_HOST: db_dev
+      POSTGRES_PORT: 5433
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - db_dev
       - rabbitmq
 
   db_dev:
