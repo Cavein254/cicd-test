@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from charidfield import CharIDField
 
 
 class CustomUserManager(BaseUserManager):
@@ -24,6 +25,13 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    public_id = CharIDField(
+        primary_key=False,   # 👈 keep your default PK separate
+        prefix="usr_",
+        length=12,
+        unique=True,
+        editable=False
+    )
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
