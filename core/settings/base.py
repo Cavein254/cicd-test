@@ -90,3 +90,14 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "users.CustomUser"
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379/1",  # service name = redis
+    }
+}
+
+CELERY_BROKER_URL = 'amqp://user:pass@rabbitmq:5672//'
+CELERY_RESULT_BACKEND = "rpc://"
