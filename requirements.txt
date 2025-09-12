@@ -4,10 +4,14 @@ djangorestframework>=3.15
 whitenoise>=6.7
 celery>=5.4
 redis>=5.0
-ampq
+amqp
 django-ip-geolocation
 django-ratelimit
 django-environ
+django-cors-headers
+Pillow>=10.0  # For image handling
+django-charid-field # For short unique IDs
+cuid # For collision-resistant IDs
 # Database
 psycopg2-binary>=2.9  # For PostgreSQL
 
