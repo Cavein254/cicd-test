@@ -28,7 +28,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     public_id = CharIDField(
         primary_key=False,   # 👈 keep your default PK separate
         prefix="usr_",
-        length=12,
+        max_length=12,
         unique=True,
         editable=False
     )
