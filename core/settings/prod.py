@@ -3,17 +3,15 @@ DEBUG = False
 ALLOWED_HOSTS = ["yourdomain.com"]
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "prod_db",
-        "USER": "produser",
-        "PASSWORD": "prodpass",
-        "HOST": "localhost",
-        "PORT": "5435",
-    }
+    "default": dj_database_url.config(
+        default=env(
+            "DATABASE_URL",
+            default="postgresql://myuser:mypassword@db:5432/mydb",
+        ),
+        conn_max_age=600,
+        ssl_require=env.bool("DB_SSL_REQUIRED", default=False),
+    )
 }
-
-
 
 CACHES = {
     "default": {
