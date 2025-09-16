@@ -6,6 +6,11 @@ pipeline {
         DOCKER_IMAGE = 'cave254/${image}'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub_auth') // Replace with your Jenkins credentials ID
+        DB_NAME='mydatabase'
+        DB_USER='myuser'
+        DB_PASSWORD='mysecretpassword'
+        DB_HOST='192.168.122.200'
+        DB_PORT='32345'
     }
 
     stages {
@@ -35,8 +40,8 @@ pipeline {
                 echo 'collecting static files and preparing build'
                 sh '''
                 source ${VENV}/bin/activate
-                python manage.py collectstatic --noinput
-                python manage.py migrate
+                python manage.py collectstatic --noinput --settings=core.settings.dev
+                python manage.py migrate --settings=core.settings.dev
                 '''
             }
         }
@@ -45,7 +50,7 @@ pipeline {
                 echo 'running tests'
                 sh '''
                 . ${VENV}/bin/activate
-                python manage.py test
+                python manage.py test --settings=core.settings.dev
                 '''
             }
         }
@@ -53,7 +58,9 @@ pipeline {
             steps {
                 echo 'Building Docker image...'
                 sh '''
-                docker build -t ${DOCKER_IMAGE}:${IMAGE_TAG} .
+                docker build \
+                --build-arg DJANGO_SETTINGS_MODULE=core.settings.prod \
+                -f Dockerfile.prod -t ${DOCKER_IMAGE}:${IMAGE_TAG} .
                 '''
             }
         
