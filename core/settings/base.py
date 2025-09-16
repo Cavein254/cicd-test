@@ -2,7 +2,7 @@ from pathlib import Path
 import environ
 import os
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Initialise environment variables
 env = environ.Env()

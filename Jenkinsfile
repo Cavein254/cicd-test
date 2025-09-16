@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         VENV = "${WORKSPACE}/venv"
-        DOCKER_IMAGE = 'cave254/trueshoppers'
+        DOCKER_IMAGE = 'cave254/${image}'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub_auth') // Replace with your Jenkins credentials ID
     }
@@ -25,7 +25,7 @@ pipeline {
 
                 // activate the virtual environment and install dependencies
                 sh '''
-                source ${VENV}/bin/activate
+                . ${VENV}/bin/activate
                 pip install -r requirements.txt
                 '''
             }
@@ -44,7 +44,7 @@ pipeline {
             steps {
                 echo 'running tests'
                 sh '''
-                source ${VENV}/bin/activate
+                . ${VENV}/bin/activate
                 python manage.py test
                 '''
             }
