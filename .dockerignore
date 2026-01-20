@@ -1,0 +1,39 @@
+# Byte-code and cache files
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.Python
+env
+venv
+/venv
+*/venv
+
+# Test and coverage artifacts
+.tox
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+
+# VCS and other system files
+.git
+.gitignore
+.mypy_cache
+.pytest_cache
+.hypothesis
+.vscode
+.idea
+.DS_Store
+
+# Sensitive environment variables/secrets
+.env
+.aws
